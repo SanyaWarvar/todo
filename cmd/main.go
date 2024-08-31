@@ -47,7 +47,7 @@ func main() {
 		port = "8080"
 	}
 
-	if err := srv.Run(, handlers.InitRoutes()); err != nil {
+	if err := srv.Run(port, handlers.InitRoutes()); err != nil {
 		logrus.Fatalf("Error while running server: %s", err.Error())
 	}
 
