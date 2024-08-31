@@ -42,7 +42,12 @@ func main() {
 	handlers := handler.NewHandler(services)
 	srv := new(todo.Server)
 
-	if err := srv.Run(os.Getenv("PORT"), handlers.InitRoutes()); err != nil {
+	port := os.Getenv("PORT")
+	if port == ""{
+		port = "8080"
+	}
+
+	if err := srv.Run(, handlers.InitRoutes()); err != nil {
 		logrus.Fatalf("Error while running server: %s", err.Error())
 	}
 
