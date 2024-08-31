@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -35,4 +36,20 @@ func (h *Handler) userIdentity(c *gin.Context) {
 	fmt.Println(userId, err)
 	c.Set(userCtx, userId)
 
+}
+
+func getUserId(c *gin.Context) (int, error) {
+	userId, ok := c.Get(userCtx)
+	if !ok {
+		newErrorResponse(c, http.StatusInternalServerError, "user id not found")
+		return 0, errors.New("user id not found")
+	}
+
+	idInt, ok := userId.(int)
+	if !ok {
+		newErrorResponse(c, http.StatusInternalServerError, "user id is invalid")
+		return 0, errors.New("user id is invalid")
+	}
+
+	return idInt, nil
 }

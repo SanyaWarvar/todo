@@ -6,8 +6,8 @@ CREATE TABLE users (
 
 CREATE TABLE todo_lists (
     id serial NOT NULL UNIQUE,
-    username varchar(255) NOT NULL UNIQUE,
-    password_hash varchar(255) NOT NULL
+    title varchar(255) NOT NULL,
+    description varchar(255) NOT NULL
 );
 
 CREATE TABLE users_lists (
