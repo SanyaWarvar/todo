@@ -7,7 +7,7 @@ COPY . /
 WORKDIR /
 
 # Собираем ваш Go-проект (компилируем) с помощью команды go build и файлом main.go
-RUN go build ./src/main.go
+RUN go build ./cmd/main.go
 
 # Указываем команду, которая будет выполняться при запуске контейнера
 CMD ["./src/main"]
