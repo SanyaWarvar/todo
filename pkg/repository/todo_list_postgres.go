@@ -108,8 +108,19 @@ func (r *TodoListPostgres) Update(userId, listId int, input todo.UpdateListInput
 
 	setQuery := strings.Join(setValues, ", ")
 
-	query := fmt.Sprintf("UPDATE %s tl SET %s FROM %s ul WHERE tl.id = ul.list_id AND ul.list_id=$%d AND ul.user_id=$%d",
-		todoListsTable, setQuery, usersListsTable, argId, argId+1)
+	query := fmt.Sprintf(
+		`
+		UPDATE %s tl 
+		SET %s 
+		FROM %s ul 
+		WHERE tl.id = ul.list_id AND ul.list_id=$%d AND ul.user_id=$%d
+		`,
+		todoListsTable,
+		setQuery,
+		usersListsTable,
+		argId,
+		argId+1,
+	)
 	args = append(args, listId, userId)
 
 	_, err := r.db.Exec(query, args...)

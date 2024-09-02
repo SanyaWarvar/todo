@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/SanyaWarvar/todo-app"
@@ -28,19 +29,19 @@ func (h *Handler) signUp(c *gin.Context) {
 
 func (h *Handler) signIn(c *gin.Context) {
 	var input todo.User
-
+	fmt.Println("work 1")
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
-
+	fmt.Println("work 2")
 	token, err := h.services.Authorization.GenerateToken(input.Username, input.Password)
-
+	fmt.Println("work 3")
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-
+	fmt.Println("work 4")
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"token": token,
 	})
