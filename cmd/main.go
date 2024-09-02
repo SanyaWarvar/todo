@@ -20,7 +20,7 @@ func main() {
 		logrus.Fatalf("Error while initializing config: %s", err.Error())
 	}
 
-	if err := godotenv.Load(); err != nil {
+	if err := godotenv.Load(".env2"); err != nil {
 		logrus.Fatalf("Error while load dotenv: %s", err.Error())
 	}
 
