@@ -1,6 +1,8 @@
 package service
 
 import (
+	"time"
+
 	"github.com/SanyaWarvar/todo-app"
 	"github.com/SanyaWarvar/todo-app/pkg/repository"
 )
@@ -33,9 +35,9 @@ type Service struct {
 	TodoItem
 }
 
-func NewService(repos *repository.Repository) *Service {
+func NewService(repos *repository.Repository, salt, signingKey string, tokenTTL time.Duration) *Service {
 	return &Service{
-		Authorization: NewAuthService(repos.Authorization),
+		Authorization: NewAuthService(repos.Authorization, salt, signingKey, tokenTTL),
 		TodoList:      NewTodoListService(repos.TodoList),
 		TodoItem:      NewTodoItemService(repos.TodoItem, repos.TodoList),
 	}

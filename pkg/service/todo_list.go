@@ -1,6 +1,8 @@
 package service
 
 import (
+	"errors"
+
 	"github.com/SanyaWarvar/todo-app"
 	"github.com/SanyaWarvar/todo-app/pkg/repository"
 )
@@ -24,16 +26,27 @@ func (s *TodoListService) GetAll(userId int) ([]todo.TodoList, error) {
 }
 
 func (s *TodoListService) GetById(userId, listId int) (todo.TodoList, error) {
+
 	return s.repo.GetById(userId, listId)
 }
 
 func (s *TodoListService) Delete(userId, listId int) error {
-	return s.repo.Delete(userId, listId)
+	_, err := s.repo.GetById(userId, listId)
+
+	if err == nil {
+		return s.repo.Delete(listId)
+	}
+	return err
+
 }
 
 func (s *TodoListService) Update(userId, listId int, input todo.UpdateListInput) error {
 	if input.IsValid() {
-		return s.repo.Update(userId, listId, input)
+		list, err := s.repo.GetById(userId, listId)
+		if err != nil {
+			return err
+		}
+		return s.repo.Update(list, input)
 	}
-	return nil
+	return errors.New("invalid input")
 }

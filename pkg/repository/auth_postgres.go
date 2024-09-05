@@ -1,33 +1,32 @@
 package repository
 
 import (
-	"fmt"
-
 	"github.com/SanyaWarvar/todo-app"
-	"github.com/jmoiron/sqlx"
+	"gorm.io/gorm"
 )
 
 type AuthPostgres struct {
-	db *sqlx.DB
+	db *gorm.DB
 }
 
-func NewAuthPostgres(db *sqlx.DB) *AuthPostgres {
+func NewAuthPostgres(db *gorm.DB) *AuthPostgres {
 	return &AuthPostgres{db: db}
 }
 
 func (r *AuthPostgres) CreateUser(user todo.User) (int, error) {
-	var id int
-	query := fmt.Sprintf("INSERT INTO %s (username, password_hash) VALUES ($1, $2) RETURNING id", usersTable)
-	row := r.db.QueryRow(query, user.Username, user.Password)
-	if err := row.Scan(&id); err != nil {
-		return 0, err
+	result := r.db.Create(&user)
+	if result.Error != nil {
+		return 0, result.Error
 	}
-	return id, nil
+	return user.Id, nil
 }
 
 func (r *AuthPostgres) GetUser(username, password string) (todo.User, error) {
-	var user todo.User
-	query := fmt.Sprintf("SELECT id FROM %s WHERE username = $1 AND password_hash = $2", usersTable)
-	err := r.db.Get(&user, query, username, password)
-	return user, err
+	user := todo.User{
+		Username:      username,
+		Password_hash: password,
+	}
+	result := r.db.Where(&user).First(&user)
+
+	return user, result.Error
 }

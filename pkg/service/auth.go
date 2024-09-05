@@ -11,34 +11,36 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-const (
-	salt       = "pashatexnik"
-	tokenTTL   = time.Hour * 24
-	signingKey = "radiance"
-)
-
 type tokenClaims struct {
 	jwt.StandardClaims
 	UserId int `json:"user_id"`
 }
 
 type AuthService struct {
-	repo repository.Authorization
+	repo       repository.Authorization
+	salt       string
+	tokenTTL   time.Duration
+	signingKey string
 }
 
-func NewAuthService(repo repository.Authorization) *AuthService {
-	return &AuthService{repo: repo}
+func NewAuthService(repo repository.Authorization, salt, signingKey string, tokenTTL time.Duration) *AuthService {
+	return &AuthService{
+		repo:       repo,
+		salt:       salt,
+		signingKey: signingKey,
+		tokenTTL:   tokenTTL,
+	}
 }
 
 func (s *AuthService) CreateUser(user todo.User) (int, error) {
-	user.Password = s.generatePasswordHash(user.Password)
+	user.Password_hash = s.generatePasswordHash(user.Password_hash)
 	return s.repo.CreateUser(user)
 }
 
 func (s *AuthService) generatePasswordHash(password string) string {
 	hash := sha1.New()
 	hash.Write([]byte(password))
-	return fmt.Sprintf("%x", hash.Sum([]byte(salt)))
+	return fmt.Sprintf("%x", hash.Sum([]byte(s.salt)))
 }
 
 func (s *AuthService) GenerateToken(username, password string) (string, error) {
@@ -51,14 +53,14 @@ func (s *AuthService) GenerateToken(username, password string) (string, error) {
 		jwt.SigningMethodHS256,
 		&tokenClaims{
 			jwt.StandardClaims{
-				ExpiresAt: time.Now().Add(tokenTTL).Unix(),
+				ExpiresAt: time.Now().Add(s.tokenTTL).Unix(),
 				IssuedAt:  time.Now().Unix(),
 			},
 			user.Id,
 		},
 	)
 
-	return token.SignedString([]byte(signingKey))
+	return token.SignedString([]byte(s.signingKey))
 }
 
 func (s *AuthService) ParseToken(accessToken string) (int, error) {
@@ -67,7 +69,7 @@ func (s *AuthService) ParseToken(accessToken string) (int, error) {
 			return nil, errors.New("invalid signing method")
 		}
 
-		return []byte(signingKey), nil
+		return []byte(s.signingKey), nil
 	})
 	if err != nil {
 		return 0, err

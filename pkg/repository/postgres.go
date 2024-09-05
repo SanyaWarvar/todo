@@ -1,9 +1,8 @@
 package repository
 
 import (
-	"fmt"
-
-	"github.com/jmoiron/sqlx"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 const (
@@ -14,34 +13,10 @@ const (
 	listsItemsTable = "list_items"
 )
 
-type Config struct {
-	Host     string
-	Port     string
-	Username string
-	Password string
-	DBName   string
-	SSLMode  string
-}
+func NewPostgresDB() (*gorm.DB, error) {
+	dsn := "host=localhost user=postgres password=qwerty port=5432 sslmode=disable"
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
-func (cfg *Config) generateDataSourceName() string {
-	return fmt.Sprintf(
-		"host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
-		cfg.Host,
-		cfg.Port,
-		cfg.Username,
-		cfg.DBName,
-		cfg.Password,
-		cfg.SSLMode,
-	)
-}
-
-func NewPostgresDB(cfg Config) (*sqlx.DB, error) {
-	db, err := sqlx.Open("postgres", cfg.generateDataSourceName())
-	if err != nil {
-		return nil, err
-	}
-
-	err = db.Ping()
 	if err != nil {
 		return nil, err
 	}

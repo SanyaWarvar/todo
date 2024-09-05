@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"time"
 
 	"github.com/SanyaWarvar/todo-app"
 	"github.com/SanyaWarvar/todo-app/pkg/handler"
@@ -24,21 +25,21 @@ func main() {
 		logrus.Fatalf("Error while load dotenv: %s", err.Error())
 	}
 
-	db, err := repository.NewPostgresDB(repository.Config{
-		Host:     os.Getenv("DB_HOST"),
-		Port:     os.Getenv("DB_PORT"),
-		Username: os.Getenv("DB_USER"),
-		DBName:   os.Getenv("DB_NAME"),
-		SSLMode:  os.Getenv("DB_SSLMODE"),
-		Password: os.Getenv("DB_PASSWORD"),
-	})
+	db, err := repository.NewPostgresDB()
 
 	if err != nil {
 		logrus.Fatalf("Error while create connection to db: %s", err.Error())
 	}
 
+	salt := os.Getenv("SALT")
+	signingKey := os.Getenv("SIGNINGKEY")
+	tokenTTL, err := time.ParseDuration(os.Getenv("TOKENTTL"))
+	if err != nil {
+		logrus.Fatalf("Error while parsing dotenv tokenttl: %s", err.Error())
+	}
+
 	repos := repository.NewRepository(db)
-	services := service.NewService(repos)
+	services := service.NewService(repos, salt, signingKey, tokenTTL)
 	handlers := handler.NewHandler(services)
 	srv := new(todo.Server)
 
