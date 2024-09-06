@@ -37,11 +37,12 @@ func main() {
 		logrus.Fatalf("Error while load dotenv: %s", err.Error())
 	}
 	dsn := fmt.Sprintf(
-		"host=%s user=%s password=%s port=%s sslmode=%s",
+		"host=%s user=%s password=%s port=%s dbname=%s sslmode=%s",
 		os.Getenv("DB_HOST"),
 		os.Getenv("DB_USER"),
 		os.Getenv("DB_PASSWORD"),
 		os.Getenv("DB_PORT"),
+		os.Getenv("DB_NAME"),
 		os.Getenv("DB_SSLMODE"),
 	)
 	db, err := repository.NewPostgresDB(dsn)
