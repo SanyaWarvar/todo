@@ -13,8 +13,8 @@ const (
 	listsItemsTable = "list_items"
 )
 
-func NewPostgresDB() (*gorm.DB, error) {
-	dsn := "host=localhost user=postgres password=qwerty port=5432 sslmode=disable"
+func NewPostgresDB(dsn string) (*gorm.DB, error) {
+	 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {

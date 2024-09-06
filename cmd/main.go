@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"time"
 
@@ -14,6 +15,17 @@ import (
 	"github.com/spf13/viper"
 )
 
+// @title Todo App API
+// @version 1.0
+// @description API Server for TodoList Application
+
+// @host todo-vice.onrender:8000
+// @BasePath /
+
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
+
 func main() {
 
 	logrus.SetFormatter(new(logrus.JSONFormatter))
@@ -24,8 +36,15 @@ func main() {
 	if err := godotenv.Load(".env2"); err != nil {
 		logrus.Fatalf("Error while load dotenv: %s", err.Error())
 	}
-
-	db, err := repository.NewPostgresDB()
+	dsn := fmt.Sprintf(
+		"host=%s user=%s password=%s port=%s sslmode=%s",
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_PORT"),
+		os.Getenv("DB_SSLMODE"),
+	)
+	db, err := repository.NewPostgresDB(dsn)
 
 	if err != nil {
 		logrus.Fatalf("Error while create connection to db: %s", err.Error())

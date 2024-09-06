@@ -60,7 +60,6 @@ func (r *TodoListPostgres) GetById(userId, listId int) (todo.TodoList, error) {
 
 	return list, result.Error
 }
-
 func (r *TodoListPostgres) Delete(listId int) error {
 	result := r.db.Table(todoListsTable).Delete(&todo.TodoList{Id: listId})
 	return result.Error
