@@ -72,7 +72,95 @@ func main() {
 		logrus.Fatalf("Error while running server: %s", err.Error())
 	}
 
+} /*
+func generateUser() (string, string) {
+	username := faker.Name()
+	password := faker.Password()
+	return username, password
 }
+
+func generateData() (string, string) {
+	title := faker.Word()
+	description := faker.Word()
+	return title, description
+}
+
+func fillDataSync(user_n, list_n, item_n int, service *service.Service) {
+	for i := 0; i < user_n; i++ {
+		username, password := generateUser()
+
+		user := todo.User{Username: username, Password_hash: password}
+		userId, err := service.CreateUser(user)
+		if err != nil {
+			return
+		}
+		for j := 0; j < list_n; j++ {
+			title, description := generateData()
+			list := todo.TodoList{Title: title, Description: description}
+			listId, err := service.TodoList.Create(userId, list)
+			if err != nil {
+				return
+			}
+			for m := 0; m < item_n; m++ {
+				title, description := generateData()
+				item := todo.TodoItem{Title: title, Description: description}
+				_, _ = service.TodoItem.Create(userId, listId, item)
+			}
+
+		}
+	}
+}*/
+/*
+func fillData(user_n, list_n, item_n int, service *service.Service) {
+	wg := sync.WaitGroup{}
+	for i := 0; i < user_n; i++ {
+		wg.Add(1)
+		go fillUser(&wg, list_n, item_n, service)
+	}
+	wg.Wait()
+}
+
+func fillUser(wg *sync.WaitGroup, list_n, item_n int, service *service.Service) {
+	wg2 := sync.WaitGroup{}
+	username, password := generateUser()
+
+	user := todo.User{Username: username, Password_hash: password}
+	userId, err := service.CreateUser(user)
+	if err != nil {
+		return
+	}
+	for j := 0; j < list_n; j++ {
+		wg2.Add(1)
+		go fillList(&wg2, userId, item_n, service)
+
+	}
+	wg2.Wait()
+	wg.Done()
+}
+
+func fillList(wg *sync.WaitGroup, userId, item_n int, service *service.Service) {
+	wg2 := sync.WaitGroup{}
+	title, description := generateData()
+	list := todo.TodoList{Title: title, Description: description}
+	listId, err := service.TodoList.Create(userId, list)
+	if err != nil {
+		return
+	}
+	for m := 0; m < item_n; m++ {
+		wg2.Add(1)
+		go fillItem(&wg2, userId, listId, service)
+	}
+	wg2.Wait()
+	wg.Done()
+}
+
+func fillItem(wg *sync.WaitGroup, userId, listId int, service *service.Service) {
+	title, description := generateData()
+	item := todo.TodoItem{Title: title, Description: description}
+	_, _ = service.TodoItem.Create(userId, listId, item)
+	wg.Done()
+}
+*/
 
 func initConfig() error {
 	viper.AddConfigPath("configs")

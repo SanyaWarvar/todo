@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"errors"
+
 	"github.com/SanyaWarvar/todo-app"
 	"gorm.io/gorm"
 )
@@ -57,6 +59,10 @@ func (r *TodoListPostgres) GetById(userId, listId int) (todo.TodoList, error) {
 		Joins("inner join users_lists on users_lists.list_id = todo_lists.id").
 		Where("users_lists.user_id = ? AND users_lists.list_id = ?", userId, listId).
 		Find(&list)
+
+	if list.Id == 0 {
+		return list, errors.New("list not found")
+	}
 
 	return list, result.Error
 }
